@@ -1,0 +1,16 @@
+rank,Feature,Importance,model
+1,TaxiOut,0.17454482568874585,Random Forest
+2,Airline_AA,0.10100018231923209,Random Forest
+3,Airline_AS,0.08784327268658479,Random Forest
+4,Airline_UA,0.06431146273237305,Random Forest
+5,Airline_DL,0.05938343803153081,Random Forest
+6,Dest_SEA,0.055632218784902224,Random Forest
+7,Origin_ORD,0.05533573210936771,Random Forest
+8,Origin_ATL,0.0545761691577795,Random Forest
+9,Distance,0.02855486438473656,Random Forest
+10,Dest_ATL,0.02378054902439742,Random Forest
+11,DayOfWeek,0.02273005921303245,Random Forest
+12,Dest_MDW,0.019044560659838297,Random Forest
+13,Dest_EWR,0.0170771894166546,Random Forest
+14,Airline_WN,0.014159154329041333,Random Forest
+15,Origin_MDW,0.01380365216298456,Random Forest

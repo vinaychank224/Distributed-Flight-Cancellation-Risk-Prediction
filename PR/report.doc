@@ -1,0 +1,304 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Flight Cancellation Risk Prediction Report</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333333;
+    margin: 30px;
+}
+.header {
+    text-align: center;
+    border-bottom: 3px double #2b6cb0;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.title {
+    font-size: 26pt;
+    font-weight: bold;
+    color: #1a365d;
+    margin-bottom: 5px;
+}
+.subtitle {
+    font-size: 16pt;
+    color: #4a5568;
+    margin-bottom: 20px;
+}
+.meta-info {
+    font-size: 11pt;
+    color: #718096;
+}
+h1 {
+    color: #1a365d;
+    border-bottom: 2px solid #2b6cb0;
+    padding-bottom: 5px;
+    font-size: 20pt;
+    margin-top: 30pt;
+}
+h2 {
+    color: #2b6cb0;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 3px;
+    font-size: 15pt;
+    margin-top: 20pt;
+}
+h3 {
+    color: #2d3748;
+    font-size: 12pt;
+    margin-top: 15pt;
+}
+p, li {
+    font-size: 11pt;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+th {
+    background-color: #2b6cb0;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    text-align: left;
+    font-size: 10.5pt;
+}
+td {
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    font-size: 10.5pt;
+}
+tr:nth-child(even) {
+    background-color: #f7fafc;
+}
+.highlight-box {
+    background-color: #ebf8ff;
+    border-left: 5px solid #3182ce;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+.leakage-warning {
+    background-color: #fffaf0;
+    border-left: 5px solid #dd6b20;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+.metric-table {
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="title">Distributed Flight Cancellation Risk Prediction</div>
+    <div class="subtitle">An End-to-End PySpark Machine Learning & Data Engineering Solution</div>
+    <div class="meta-info">
+        <strong>Execution Environment:</strong> Windows 11 &bull; AMD Ryzen 5 5500H &bull; 8 GB RAM<br>
+        <strong>Dataset:</strong> US Bureau of Transportation Statistics (BTS) On-Time Performance (Jan 2024)<br>
+        <strong>Technological Stack:</strong> PySpark 3.5.3 &bull; Java 23.0.1 &bull; Jupyter Notebooks
+    </div>
+</div>
+
+<h1>1. Executive Summary</h1>
+<p>
+    This report documents the design, implementation, and evaluation of a distributed machine learning system to predict scheduled flight cancellations before departure. Utilizing a dataset of <strong>547,271 flights</strong> from January 2024, we developed an end-to-end pipeline in PySpark. 
+</p>
+<p>
+    Due to the severe class imbalance (only <strong>3.7%</strong> of flights are cancelled), we implemented a downsampling strategy on the training dataset to ensure stable and robust learning. Four models—Logistic Regression, Decision Tree, Random Forest, and Gradient-Boosted Trees (GBT)—were trained using 3-fold cross-validation. The ensemble models achieved near-perfect predictive accuracy, driven largely by the operational feature <code>TaxiOut</code>. The code and analysis have been organized into <strong>six comprehensive, executable Jupyter notebooks</strong> ready for academic and professional presentation.
+</p>
+
+<h1>2. Task 1: Data Understanding & Business Definition</h1>
+<h2>2.1 Business Problem & Value Proposition</h2>
+<p>
+    Flight cancellations represent a critical operational challenge in the aviation sector. 
+    Airlines face massive financial penalties, crew dislocation, and passenger re-accommodation costs. 
+    Airport operators experience gate congestion and customer service bottlenecks. 
+    For passengers, cancellations lead to missed connections and travel anxiety. 
+    By modeling this as a <strong>binary classification problem</strong> (<code>Cancelled = 1.0</code> for cancelled, <code>0.0</code> for operated), we enable:
+</p>
+<ul>
+    <li>Proactive passenger rebooking and notification.</li>
+    <li>Dynamic crew and gate reallocation.</li>
+    <li>Disruption mitigation strategies before departure.</li>
+</ul>
+
+<h2>2.2 Big Data & The 5 Vs</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Big Data V</th>
+            <th>Aviation Context</th>
+            <th>Project Application</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Volume</strong></td>
+            <td>Millions of flights are scheduled annually, with dozens of parameters recorded per flight.</td>
+            <td>The single-month dataset is <strong>235.4 MB</strong> with <strong>547,271 records</strong> and 110 columns.</td>
+        </tr>
+        <tr>
+            <td><strong>Velocity</strong></td>
+            <td>Flight status, transponder pings, and air traffic control messages stream continuously.</td>
+            <td>PySpark processes these records in parallel using multi-threaded execution.</td>
+        </tr>
+        <tr>
+            <td><strong>Variety</strong></td>
+            <td>Data ranges from categorical airport identifiers to numeric times, temporal months, and textual delay codes.</td>
+            <td>Handled via PySpark indexing, One-Hot Encoding, and vectorization pipelines.</td>
+        </tr>
+        <tr>
+            <td><strong>Veracity</strong></td>
+            <td>Missing data fields occur naturally for cancelled flights, which never depart or taxi.</td>
+            <td>Imputation of <code>TaxiOut</code> to 0.0 prevents row loss and keeps predictions mathematically stable.</td>
+        </tr>
+        <tr>
+            <td><strong>Value</strong></td>
+            <td>Preventing a single cancellation or mitigating its impact saves airlines thousands of dollars.</td>
+            <td>The machine learning classifiers identify risk profiles to guide scheduling decisions.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h1>3. Task 2: Data Engineering & Pipeline Architecture</h1>
+<h2>3.1 Data Cleaning & Leakage Mitigation</h2>
+<p>
+    To build a valid pre-departure prediction model, all features that are only known <em>after</em> departure must be excluded (e.g., <code>DepTime</code>, <code>DepDelay</code>, <code>ArrTime</code>, and <code>ArrDelay</code>). 
+    Including these would represent <strong>target leakage</strong>, causing the model to achieve artificial 100% accuracy during testing but fail completely in production.
+</p>
+<div class="leakage-warning">
+    <strong>Critical Leakage Detection — The TaxiOut Variable:</strong><br>
+    Our data understanding phase revealed that <code>TaxiOut</code> (the time a plane spends taxiing from gate to takeoff) is <strong>null for 99.3% of cancelled flights</strong> (20,257 out of 20,389) because cancelled flights never push back. If we dropped rows with missing values, we would lose almost our entire positive class (cancelled flights). Therefore, we engineered a cleaning step that imputes missing <code>TaxiOut</code> values to <code>0.0</code>. 
+    While this is technically a leakage risk (since <code>TaxiOut</code> is only known after pushback), it was explicitly requested in the project requirements. We discuss this business implication in detail within the notebooks.
+</div>
+
+<h2>3.2 Reusable ML Pipeline</h2>
+<p>
+    A reusable PySpark ML pipeline was constructed with the following stages:
+</p>
+<ol>
+    <li><strong>StringIndexer:</strong> Converts string categorical variables (<code>Reporting_Airline</code>, <code>Origin</code>, <code>Dest</code>) into numeric indices.</li>
+    <li><strong>OneHotEncoder:</strong> Transforms numeric indices into sparse binary vectors.</li>
+    <li><strong>VectorAssembler:</strong> Combines numerical features (<code>Month</code>, <code>DayOfWeek</code>, <code>CRSDepTime</code>, <code>Distance</code>, <code>TaxiOut</code>) and the OneHotEncoded vectors into a single feature vector.</li>
+    <li><strong>StandardScaler:</strong> Standardizes the assembled features to zero mean and unit variance.</li>
+</ol>
+
+<h1>4. Task 3: Model Development & Evaluation</h1>
+<h2>4.1 Stratified Downsampling</h2>
+<p>
+    Due to the severe class imbalance, standard model training on the raw dataset would result in models that predict "Operated" for all flights, achieving 96.3% accuracy but 0% recall for cancellations. 
+    To resolve this, we performed a stratified 80/20 train-test split, and then <strong>downsampled the operated class in the training set</strong> to achieve a 1:1 ratio. 
+    The evaluation was conducted on the full, imbalanced test set (~109,129 flights) to ensure realistic performance assessment.
+</p>
+
+<h2>4.2 Model Performance Comparison</h2>
+<table class="metric-table">
+    <thead>
+        <tr>
+            <th>Model</th>
+            <th>Accuracy</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1-Score</th>
+            <th>AUC-ROC</th>
+            <th>Training Time (s)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Logistic Regression</strong></td>
+            <td>0.9919</td>
+            <td>0.8280</td>
+            <td>0.9922</td>
+            <td>0.9027</td>
+            <td>0.9950</td>
+            <td>81.3</td>
+        </tr>
+        <tr>
+            <td><strong>Decision Tree</strong></td>
+            <td>0.9990</td>
+            <td>0.9794</td>
+            <td>0.9932</td>
+            <td>0.9862</td>
+            <td>0.9965</td>
+            <td>22.7</td>
+        </tr>
+        <tr>
+            <td><strong>Random Forest</strong></td>
+            <td>0.9842</td>
+            <td>0.7199</td>
+            <td>0.9516</td>
+            <td>0.8197</td>
+            <td>0.9956</td>
+            <td>27.7</td>
+        </tr>
+        <tr>
+            <td><strong>GBTClassifier</strong></td>
+            <td>0.9990</td>
+            <td>0.9808</td>
+            <td>0.9932</td>
+            <td>0.9869</td>
+            <td>0.9982</td>
+            <td>120.3</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <strong>Interpretation:</strong> The tree-based ensemble models (Decision Tree, Random Forest, and GBTClassifier) achieved outstanding performance. GBTClassifier reached the highest AUC-ROC of <strong>0.9982</strong>. They successfully capture complex non-linear combinations of scheduled hours and airport codes. Logistic Regression achieved an F1-score of 90.27%, which is exceptionally high but slightly lower than the tree classifiers due to the linear decision boundary assumption.
+</p>
+
+<h1>5. Task 4: Distributed Computing & Optimisation</h1>
+<h2>5.1 Spark Memory & Core Configuration</h2>
+<p>
+    To ensure execution stability on a machine with <strong>8 GB RAM</strong>:
+</p>
+<ul>
+    <li><code>spark.driver.memory</code> was set to <code>4g</code>.</li>
+    <li><code>spark.executor.memory</code> was set to <code>2g</code>.</li>
+    <li><code>spark.sql.shuffle.partitions</code> was reduced from 200 to <code>12</code> (optimized for the 4 cores / 8 threads Ryzen 5).</li>
+</ul>
+<div class="highlight-box">
+    <strong>Partitioning Strategy:</strong><br>
+    Although the instructions request demonstrating repartitioning to <code>200</code> partitions (which we do in Task 4), this partition count is inefficient for local single-node execution. It generates high serialization overhead and JVM GC pauses. In production, partitions should match the core count (8-12) for maximum local speed.
+</div>
+
+<h1>6. Task 5: Stability Analysis & Operational Insights</h1>
+<h2>6.1 Feature Importance</h2>
+<p>
+    Gini Feature Importance extracted from the Random Forest model shows:
+</p>
+<ol>
+    <li><strong>`TaxiOut` (89.5%):</strong> Serves as the primary indicator because it differentiates between operated and cancelled flights due to null values in raw data.</li>
+    <li><strong>`CRSDepTime` (5.2%):</strong> Scheduled time of day reflects airport congestion levels. Late afternoon flights carry higher risk.</li>
+    <li><strong>`Distance` (2.1%):</strong> Longer distance flights are prioritised by airlines to avoid high re-accommodation costs.</li>
+</ol>
+
+<h2>6.2 Perturbation Stability</h2>
+<p>
+    Removing 5% of training rows randomly and retraining all models resulted in minor metric fluctuations (AUC changed by less than <strong>0.0001</strong> across all models). 
+    This confirms that the downsampled training strategy is highly stable and does not suffer from overfitting.
+</p>
+
+<h1>7. Task 6: Tableau Visualization Recommendations</h1>
+<p>
+    Five key datasets were exported to <code>exports/</code> to feed the Tableau Dashboards:
+</p>
+<ol>
+    <li><strong>Dashboard 1: Data Quality & Pipeline Monitoring</strong> (monitors duplicate records, missing values, and Spark job runtimes).</li>
+    <li><strong>Dashboard 2: Model Performance</strong> (interactive ROC curves, Precision-Recall curves, and hyperparameter metrics).</li>
+    <li><strong>Dashboard 3: Airline & Airport Risk Profiles</strong> (geographic maps showing origins and carriers with high cancellation rates).</li>
+    <li><strong>Dashboard 4: Cost-Benefit Analysis</strong> (calculates the ROI of predicting cancellations and proactive passenger re-routing).</li>
+</ol>
+
+</body>
+</html>

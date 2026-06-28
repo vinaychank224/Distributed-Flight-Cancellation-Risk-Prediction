@@ -1,0 +1,5 @@
+stage,rows,rows_removed_vs_prev,pct_of_raw
+raw_loaded,547271,,100.0
+after_dedup,547271,0,100.0
+after_null_filter,547271,0,100.0
+final_clean,547271,0,100.0

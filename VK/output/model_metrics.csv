@@ -1,0 +1,5 @@
+Model,Accuracy,Precision,Recall,F1,AUC,Training Time
+Logistic Regression,0.9926,0.8387,0.9914,0.9087,0.9958,154.62
+Decision Tree,0.9992,0.9854,0.9929,0.9891,0.9951,116.01
+Random Forest,0.7631,0.0972,0.6481,0.1691,0.7991,90.25
+GBTClassifier,0.9992,0.9849,0.9929,0.9889,0.9981,140.33

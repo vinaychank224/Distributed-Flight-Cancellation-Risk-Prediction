@@ -1,0 +1,5 @@
+Model,Training_Time_Sec,Cores_Used,Dataset_Rows
+Logistic Regression,81.26,4,32617
+Decision Tree,22.67,4,32617
+Random Forest,27.72,4,32617
+GBTClassifier,120.26,4,32617

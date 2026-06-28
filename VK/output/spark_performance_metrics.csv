@@ -1,0 +1,14 @@
+metric,value
+spark_version,4.1.2
+master,local[2]
+driver_memory,3g
+executor_memory,2g
+shuffle_partitions,8
+default_parallelism,2
+data_partitions,2
+total_rows,547271
+clean_rows,547271
+train_rows,32695
+test_rows,109391
+storage_strategy,MEMORY_AND_DISK
+os_environment,Windows 11

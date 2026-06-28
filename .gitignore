@@ -1,0 +1,19 @@
+# Ignore large datasets
+*.csv
+!VK/output/*.csv
+!PR/exports/*.csv
+
+# Python caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Spark & Java temp directories/logs
+**/spark-warehouse/
+*.log
+hs_err_pid*
+
+# OS specific files
+.DS_Store
+Thumbs.db
